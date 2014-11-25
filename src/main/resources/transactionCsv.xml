@@ -1,0 +1,20 @@
+<beanio xmlns="http://www.beanio.org/2012/03"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.beanio.org/2012/03 http://www.beanio.org/2012/03/mapping.xsd">
+
+    <stream name="transactionCsv" format="csv">
+        <typeHandler type="org.joda.time.DateTime"
+                     class="com.javathinking.sample2.common.file.input.beanio.DateTimeHandler">
+            <property name="pattern" value="yyyyMMdd"/>
+        </typeHandler>
+        <record name="transaction" minOccurs="0" maxOccurs="unbounded"
+                class="com.javathinking.sample2.type1.transaction.Transaction">
+            <field name="fileRef"/>
+            <field name="client"/>
+            <field name="account"/>
+            <field name="amount"/>
+            <field name="date"/>
+        </record>
+    </stream>
+
+</beanio>

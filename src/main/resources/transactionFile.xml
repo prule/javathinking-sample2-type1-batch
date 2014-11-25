@@ -1,0 +1,41 @@
+<beanio xmlns="http://www.beanio.org/2012/03"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.beanio.org/2012/03 http://www.beanio.org/2012/03/mapping.xsd">
+
+    <stream name="transactionFile" format="fixedlength">
+        <typeHandler type="org.joda.time.DateTime"
+                     class="com.javathinking.sample2.common.file.input.beanio.DateTimeHandler">
+            <property name="pattern" value="yyyyMMdd"/>
+        </typeHandler>
+        <record name="header" order="1" minOccurs="1" maxOccurs="1"
+                class="com.javathinking.sample2.type1.batch.input.model.Header">
+            <field name="recordType" rid="true" literal="HH" ignore="true"/>
+            <field name="date" length="8"/>
+        </record>
+        <group name="departmentGroup" order="2" minOccurs="0" maxOccurs="unbounded">
+            <record name="deptHeader" order="1" minOccurs="1" maxOccurs="1"
+                    class="com.javathinking.sample2.type1.batch.input.model.GroupHeader">
+                <field name="recordType" rid="true" literal="GH" ignore="true"/>
+                <field name="client" length="10"/>
+            </record>
+            <record name="transaction" order="2" minOccurs="0" maxOccurs="unbounded"
+                    class="com.javathinking.sample2.type1.batch.input.model.TransactionLine">
+                <field name="recordType" rid="true" literal="TX" ignore="true"/>
+                <field name="account" length="10"/>
+                <field name="date" length="8"/>
+                <field name="amount" length="12" justify="right" padding="0"/>
+            </record>
+            <record name="deptTrailer" order="3" minOccurs="1" maxOccurs="1"
+                    class="com.javathinking.sample2.type1.batch.input.model.GroupFooter">
+                <field name="recordType" rid="true" literal="GF" ignore="true"/>
+                <field name="count" length="10" justify="right" padding="0"/>
+            </record>
+        </group>
+        <record name="trailer" order="3" minOccurs="1" maxOccurs="1"
+                class="com.javathinking.sample2.type1.batch.input.model.Footer">
+            <field name="recordType" rid="true" literal="FF" ignore="true"/>
+            <field name="count" length="8" justify="right" padding="0"/>
+        </record>
+    </stream>
+
+</beanio>

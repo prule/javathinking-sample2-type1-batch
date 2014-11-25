@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+ http://www.springframework.org/schema/beans/spring-beans.xsd     http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+
+    <!--<bean id="fileFactory" class="com.javathinking.sample2.type1.batch.input.Type1CustomFileFormatFactory"/>-->
+    <bean id="fileFactory" class="com.javathinking.sample2.type1.batch.input.Type1BeanIoFileFormatFactory"/>
+    <bean name="fileFormat" factory-method="create" factory-bean="fileFactory">
+        <property name="listeners">
+            <list>
+                <!--<bean class="com.javathinking.sample2.common.file.input.SysoutLineParsingListener"/>-->
+                <bean class="com.javathinking.sample2.type1.batch.input.GroupCountLineParsingListener"/>
+                <bean class="com.javathinking.sample2.common.file.input.beanio.BeanIoCsvLineWriterParsingListener">
+                    <constructor-arg index="0" value="/tmp/out.txt"/>
+                    <constructor-arg index="1" value="com.javathinking.sample2.type1.batch.input.model.TransactionLine"/>
+                    <constructor-arg index="2" value="transactionCsv.xml"/>
+                    <constructor-arg index="3" value="transactionCsv"/>
+                    <constructor-arg index="4">
+                        <bean class="com.javathinking.sample2.type1.batch.input.model.TransactionConverter"/>
+                    </constructor-arg>
+                </bean>
+                <!--<bean class="com.javathinking.sample2.type1.batch.input.PersistenceLineParsingListener"/>-->
+                <!-- possibly add others to transform data or do more structure validation etc -->
+            </list>
+        </property>
+    </bean>
+
+    <bean name="type1Validator" class="com.javathinking.commons.validation.Validator">
+        <constructor-arg index="0" value="false"/>
+        <constructor-arg index="1">
+            <list>
+                <bean class="com.javathinking.sample2.type1.batch.input.MinimumAmountRule">
+                    <constructor-arg index="0" ref="transactionRepository"/>
+                    <constructor-arg index="1" value="0"/>
+                </bean>
+            </list>
+        </constructor-arg>
+    </bean>
+</beans>
